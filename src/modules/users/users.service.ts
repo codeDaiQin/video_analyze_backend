@@ -4,7 +4,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
+  public async create(user: CreateUserDto) {
+    // 检查账号是否存在
+    if (await this.findByEmail(user.email)) {
+    }
     return 'This action adds a new user';
   }
 
@@ -12,8 +15,22 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
+  findById(id: string) {
     return `This action returns a #${id} user`;
+  }
+
+  public async findByEmail(email: string, forPasswordVerification?: boolean) {
+    // let query = this.usersModel.findOne({ email });
+
+    if (forPasswordVerification) {
+      // query = query.select('+salt +password');
+    }
+
+    return {
+      email,
+      id: Math.random(),
+      name: new Date(),
+    };
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
