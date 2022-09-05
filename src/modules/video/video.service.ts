@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 import { existsSync, mkdirSync } from 'fs';
 import ffmpeg from 'ffmpeg';
+import { exec } from 'child_process';
+import { v4 } from 'uuid';
 
 const videoExt = ['mp4'];
 
@@ -11,23 +13,19 @@ export class VideoService {
     console.log(url);
   }
 
-  private formatTime(seconds: number) {
+  private formatTime(seconds: number): `${string}:${string}:${string}` {
     const h = Math.floor(seconds / 3600);
     seconds %= 3600;
     const m = Math.floor(seconds / 60);
     seconds %= 60;
-    return h > 9
-      ? h
-      : '0' +
-          h +
-          ':' +
-          (m > 9 ? m : '0' + m) +
-          ':' +
-          (seconds > 9 ? seconds : '0' + seconds);
+
+    return `${h > 9 ? h : '0' + h}:${m > 9 ? m : '0' + m}:${
+      seconds > 9 ? seconds : '0' + seconds
+    }`;
   }
 
   // 生成视频的关键帧gif
-  public async generateKeyframeGif(name: string) {
+  public async generateKeyFrameGif(name: string) {
     const ext = name.split('.').at(-1);
     const fileName = name.slice(0, name.lastIndexOf('.'));
     if (!videoExt.includes(ext)) {
@@ -60,21 +58,41 @@ export class VideoService {
       time,
     )} -s ${resolution} -pix_fmt rgb24 ${gifPath}`;
 
-    try {
-      const proess = await new ffmpeg(videoPath);
-      proess
-        .setVideoSize(resolution, true, true, '#fff') // 设置视频大小(分辨率, 保持像素纵横比, 保持长宽比例, 填充颜色)
-        .setAudioCodec('libfaac') // 设置音频编解码器
-        // .setAudioChannels(2) // 设置音频频道
-        .save(gifPath, (error, file) => {
-          if (!error) console.log('Video file: ' + file);
-        });
-    } catch (e) {
-      console.log(e);
-    }
+    console.log(command);
+
+    exec(command, (err) => {
+      console.log(err);
+    });
+
+    // try {
+    //   const proess = await new ffmpeg(videoPath);
+    //   proess
+    //     .setVideoSize(resolution, true, true, '#fff') // 设置视频大小(分辨率, 保持像素纵横比, 保持长宽比例, 填充颜色)
+    //     .setAudioCodec('libfaac') // 设置音频编解码器
+    //     // .setAudioChannels(2) // 设置音频频道
+    //     .save(gifPath, (error, file) => {
+    //       if (!error) console.log('Video file: ' + file);
+    //     });
+    // } catch (e) {
+    //   console.log(e);
+    // }
 
     return {
       gifPath,
+    };
+  }
+
+  // 上传视频
+  public async uploadVideo() {
+    const id = v4();
+
+    // 检查用户 资源目录是否存在
+    if (!existsSync('./tmp')) {
+      mkdirSync('./tmp');
+    }
+
+    return {
+      id,
     };
   }
 }

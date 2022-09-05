@@ -4,16 +4,14 @@ import {
   ExceptionFilter,
   HttpStatus,
 } from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { Request, Response } from 'express';
 
 @Catch()
 export class HTTPErrorHandle implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<FastifyReply>();
-    const request = ctx.getRequest<FastifyRequest>();
-
-    request.log.error(exception, 'error ---- ');
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
     // 非 HTTP 标准异常的处理。
     response.status(HttpStatus.SERVICE_UNAVAILABLE).send({

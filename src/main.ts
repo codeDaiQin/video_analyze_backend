@@ -1,21 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import { VersioningType } from '@nestjs/common';
+import { NestApplicationOptions, VersioningType, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import {
-  NestFastifyApplication,
-  FastifyAdapter,
-} from '@nestjs/platform-fastify';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { HTTPErrorHandle } from './common/errorHandle';
 
+const DEV_ENVS = ['test', 'dev'];
+
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-  );
+  const appOptions: NestApplicationOptions = { cors: true, bodyParser: true };
+  const app = await NestFactory.create(AppModule, appOptions);
+  const configService = app.get<ConfigService>(ConfigService);
+
+  // prefix
   app.setGlobalPrefix('api');
-  // cors
-  app.enableCors();
 
   // errorhandle
   app.useGlobalFilters(new HTTPErrorHandle());
@@ -26,15 +24,18 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  // swagger api文档
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('video_analyze')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('doc', app, document);
+  // 生产环境 swagger api文档
+  if (DEV_ENVS.includes(configService.get<string>('NODE_ENV'))) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('video_analyze')
+      .setDescription('The API description')
+      .setVersion('1.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('docs', app, document);
+  }
 
   await app.listen(3000);
+  Logger.log(`Swagger [OpenApi] - 接口文档: ${await app.getUrl()}/docs`);
 }
 bootstrap();

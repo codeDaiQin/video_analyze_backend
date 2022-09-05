@@ -14,14 +14,14 @@ export class CreateUserDto {
   })
   email: string;
 
-  @ApiPropertyOptional({
-    description: '权限',
-    enum: {
-      0: '游客',
-      1: '管理员',
-      '-1': '超级管理员',
-    },
-    default: 0,
-  })
-  role: string;
+  // @ApiPropertyOptional({
+  //   description: '权限',
+  //   enum: {
+  //     0: '游客',
+  //     1: '管理员',
+  //     '-1': '超级管理员',
+  //   },
+  //   default: 0,
+  // })
+  // role: string;
 }
