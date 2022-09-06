@@ -13,7 +13,7 @@ describe('AuthService', () => {
   });
 
   it('should be defined', () => {
-    const { accessToken } = service.generateTokens({ id: 1 });
+    const { accessToken } = service.generateToken('123');
     console.log(accessToken, '====  accessToken  ====');
     expect(accessToken).toBeDefined();
     expect(service).toBeDefined();
