@@ -13,7 +13,6 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly authService: AuthService,
   ) {}
 
   public async create(createUser: CreateUserDto) {
@@ -33,7 +32,6 @@ export class UserService {
 
     return {
       users,
-      // token: this.authService.generateTokens({ id: 1 }),
     };
   }
 

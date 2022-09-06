@@ -9,6 +9,10 @@ import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
+    UserModule,
+    VideoModule,
+
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -27,10 +31,6 @@ import { AuthModule } from './modules/auth/auth.module';
         autoLoadEntities: true,
       }),
     }),
-
-    // AuthModule,
-    UserModule,
-    VideoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
