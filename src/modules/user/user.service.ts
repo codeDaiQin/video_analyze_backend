@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/user-update.dto';
 import { UserEntity } from './user.entity';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -15,18 +14,6 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  public async create(createUser: CreateUserDto) {
-    // 检查账号是否存在
-    if (await this.findByEmail(createUser.email)) {
-      return {
-        message: '已经存在',
-      };
-    }
-
-    const user = await this.userRepository.save(createUser);
-    return user;
-  }
-
   public async findAll() {
     const users = await this.userRepository.find();
 
@@ -35,9 +22,11 @@ export class UserService {
     };
   }
 
-  public async findById(id: string) {
-    // const [err, user] = await to();
-    return `This action returns a #${id} user`;
+  public async findByUid(uid: string) {
+    const user = await this.userRepository.findOneBy({
+      uid,
+    });
+    return user;
   }
 
   public async findByEmail(email: string) {
@@ -48,8 +37,8 @@ export class UserService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async update(uid: string, updateUserDto: UpdateUserDto) {
+    // return `This action updates a #${id} user`;
   }
 
   remove(id: number) {

@@ -16,26 +16,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromHeader('token'),
+      ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_SECRET'),
     });
   }
 
   async validate(payload: JwtDto): Promise<UserEntity> {
     const { uid, exp, iat } = payload;
-    console.log(payload, 'payload');
 
-    // const token = this.authService.generateToken(uid);
-    // console.log(token);
-
-    const user = await this.userService.findById(uid);
-    console.log(user, payload, 'auth');
+    const user = await this.userService.findByUid(uid);
     if (!user) {
       throw new UnauthorizedException();
     }
-    return {
-      id: 1,
-      email: '123',
-      name: ',,c',
-    };
+
+    return user;
   }
 }

@@ -1,18 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Body, Patch, UseGuards, Req } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/user-update.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UserDetailDto } from './dto/user-detail.dto';
+import type { Request } from 'express';
+import { UserEntity } from './user.entity';
 
 @ApiTags('user')
 @UseGuards(AuthGuard('jwt'))
@@ -22,24 +16,26 @@ export class UserController {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Get('getUserDetail')
+  @ApiResponse({
+    status: 200,
+    description: '获取用户详情',
+    type: UserDetailDto,
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  getUserDetail(@Req() req: Request) {
+    const { password, id, ...user } = req.user as UserEntity;
+    return user;
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findById(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch()
+  public async update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request,
+  ) {
+    // 这里只能修改自己的内容
+    const { uid } = req.user as UserEntity;
+    // todo
+    return this.userService.update(uid, updateUserDto);
   }
 }
