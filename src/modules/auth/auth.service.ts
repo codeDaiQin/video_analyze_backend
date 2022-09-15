@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
+import * as nodemailer from 'nodemailer';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 } from 'uuid';
@@ -33,11 +33,6 @@ export class AuthService {
     );
   }
 
-  // 验证token
-  private async verify(toekn: string) {
-    return true;
-  }
-
   // 生成4位验证码
   public async generateCode(email: string) {
     const code = `${(1000 + Math.random() * 9000) >> 0}`;
@@ -48,27 +43,33 @@ export class AuthService {
       delete this.codesPool[email];
     }, 1000 * 60 * 10);
 
-    return { code };
+    await this.sendEmail(
+      email,
+      `您的验证码为: ${code}, 有效期为10分钟, 切勿告诉他人`,
+      'Welcome to MMSZB 🐛!',
+    );
+
+    return { message: 'ok' };
   }
 
   // 发送邮件
-  private async sendEmail(email: string, content: string) {
+  private async sendEmail(email: string, content: string, title: string) {
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      host: 'smtp.qq.com',
+      port: 465,
+      secure: true, // true for 465, false for other ports
       auth: {
-        user: 'mmszb@qq.com', // generated ethereal user
-        pass: 'liqianyun1226', // generated ethereal password
+        user: this.configService.get<string>('EMAIL_ADDRESS'), // generated ethereal user
+        pass: this.configService.get<string>('EMAIL_PASSWORD'), // generated ethereal password
       },
     });
 
     // send mail with defined transport object
     const info = await transporter.sendMail({
-      from: 'mmszb@qq.com', // sender address
+      from: this.configService.get<string>('EMAIL_ADDRESS'), // sender address
       to: email, // list of receivers
-      subject: 'Hello ✔', // Subject line
+      subject: title, // Subject line
       text: content, // plain text body
     });
   }
@@ -81,11 +82,10 @@ export class AuthService {
     }
 
     const user = await this.userRepository.findOneBy({ email });
-    console.log(createUser, '====', user);
 
     // 检查账号是否存在
     if (user) {
-      throw new Error('存在了哦');
+      throw new Error('用户已存在');
     }
 
     if (code !== this.codesPool[email]) {

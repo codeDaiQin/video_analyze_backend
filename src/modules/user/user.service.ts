@@ -38,7 +38,7 @@ export class UserService {
   }
 
   public async update(uid: string, updateUserDto: UpdateUserDto) {
-    // return `This action updates a #${id} user`;
+    return await this.userRepository.update({ uid }, updateUserDto);
   }
 
   remove(id: number) {
