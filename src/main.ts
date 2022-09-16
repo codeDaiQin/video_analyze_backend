@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { NestApplicationOptions, VersioningType, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+
 import { AppModule } from './app.module';
 import { HTTPErrorHandle } from './common/errorHandle';
-
-const DEV_ENVS = ['test', 'dev'];
+import { ValidationPipe } from './pipe/Validation.pipe';
 
 async function bootstrap() {
   const appOptions: NestApplicationOptions = { cors: true, bodyParser: true };
@@ -24,8 +24,11 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
+  // dto验证
+  app.useGlobalPipes(new ValidationPipe());
+
   // 生产环境 swagger api文档
-  if (DEV_ENVS.includes(configService.get<string>('NODE_ENV'))) {
+  if (['test', 'dev'].includes(configService.get<string>('NODE_ENV'))) {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('video_analyze')
       .setDescription('The API description')
