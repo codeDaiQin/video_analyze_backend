@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
@@ -102,13 +102,13 @@ export class AuthService {
     const data = await this.userRepository.findOneBy({ email: params.email });
 
     if (!data) {
-      throw new Error('用户不存在');
+      throw new HttpException('用户不存在', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const { password, id, ...user } = data;
 
     if (params.password !== password) {
-      throw new Error('密码错误');
+      throw new HttpException('密码错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const token = this.generateToken(user.uid);
