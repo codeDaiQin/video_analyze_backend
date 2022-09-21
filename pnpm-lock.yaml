@@ -15,6 +15,8 @@ specifiers:
   '@types/express': ^4.17.13
   '@types/ffmpeg': ^1.0.4
   '@types/jest': 28.1.4
+  '@types/md5': ^2.3.2
+  '@types/multer': ^1.4.7
   '@types/node': ^16.11.56
   '@types/nodemailer': ^6.4.5
   '@types/passport-jwt': ^3.0.6
@@ -33,6 +35,7 @@ specifiers:
   ffmpeg: ^0.0.4
   get-video-duration: ^4.1.0
   jest: 28.1.2
+  md5: ^2.3.0
   mysql2: ^2.3.3
   nodemailer: ^6.7.8
   passport: ^0.6.0
@@ -68,6 +71,7 @@ dependencies:
   express: 4.18.1
   ffmpeg: 0.0.4
   get-video-duration: 4.1.0
+  md5: 2.3.0
   mysql2: 2.3.3
   nodemailer: 6.7.8
   passport: 0.6.0
@@ -87,6 +91,8 @@ devDependencies:
   '@types/express': 4.17.13
   '@types/ffmpeg': 1.0.4
   '@types/jest': 28.1.4
+  '@types/md5': 2.3.2
+  '@types/multer': 1.4.7
   '@types/node': 16.11.56
   '@types/nodemailer': 6.4.5
   '@types/passport-jwt': 3.0.6
@@ -1404,8 +1410,18 @@ packages:
     dependencies:
       '@types/node': 16.11.56
 
+  /@types/md5/2.3.2:
+    resolution: {integrity: sha512-v+JFDu96+UYJ3/UWzB0mEglIS//MZXgRaJ4ubUPwOM0gvLc/kcQ3TWNYwENEK7/EcXGQVrW8h/XqednSjBd/Og==}
+    dev: true
+
   /@types/mime/3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
+    dev: true
+
+  /@types/multer/1.4.7:
+    resolution: {integrity: sha1-ic8DVHwox7vMcm8Cnip2pyMsx54=}
+    dependencies:
+      '@types/express': 4.17.13
     dev: true
 
   /@types/node/16.11.56:
@@ -2159,6 +2175,10 @@ packages:
     resolution: {integrity: sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=}
     dev: true
 
+  /charenc/0.0.2:
+    resolution: {integrity: sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=}
+    dev: false
+
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -2391,6 +2411,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /crypt/0.0.2:
+    resolution: {integrity: sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=}
+    dev: false
 
   /date-fns/2.29.2:
     resolution: {integrity: sha512-0VNbwmWJDS/G3ySwFSJA3ayhbURMTJLtwM2DTxf9CWondCnh6DTNlO9JgRSq6ibf4eD0lfMJNBxUdEAHHix+bA==}
@@ -3340,6 +3364,10 @@ packages:
       binary-extensions: 2.2.0
     dev: true
 
+  /is-buffer/1.1.6:
+    resolution: {integrity: sha1-76ouqdqg16suoTqXsritUf776L4=}
+    dev: false
+
   /is-core-module/2.10.0:
     resolution: {integrity: sha512-Erxj2n/LDAZ7H8WNJXd9tw38GYM3dv8rk8Zcs+jJuxYTW7sozH+SS8NtrSjVL1/vpLvWi1hxy96IzjJ3EHTJJg==}
     dependencies:
@@ -4101,6 +4129,14 @@ packages:
     dependencies:
       tmpl: 1.0.5
     dev: true
+
+  /md5/2.3.0:
+    resolution: {integrity: sha1-w9qaaq46MLRreww0m4exENw72k8=}
+    dependencies:
+      charenc: 0.0.2
+      crypt: 0.0.2
+      is-buffer: 1.1.6
+    dev: false
 
   /media-typer/0.3.0:
     resolution: {integrity: sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=}

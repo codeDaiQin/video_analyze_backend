@@ -24,15 +24,13 @@ export class LoginDto {
     description: '邮箱',
   })
   email: string;
-  @IsString()
+
   @ApiProperty({
     description: '密码',
     maxLength: 16,
   })
   password: string;
 
-  @IsString()
-  @Length(4, 4)
   @ApiProperty({
     description: '验证码',
     minLength: 4,
