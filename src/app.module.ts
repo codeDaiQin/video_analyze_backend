@@ -33,7 +33,7 @@ import { UploadModule } from './modules/upload/upload.module';
         database: config.get<string>('TYPEORM_DATABASE'),
         synchronize: true,
         autoLoadEntities: true,
-        logging: true,
+        // logging: true,
       }),
     }),
     // 文件处理

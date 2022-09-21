@@ -116,7 +116,7 @@ export class AuthService {
       throw new HttpException('验证码错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    if (!code || !params.password) {
+    if (!code && !params.password) {
       throw new HttpException('搞我？玩阴的', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
