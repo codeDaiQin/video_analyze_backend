@@ -99,7 +99,8 @@ export class AuthService {
 
   // 登录
   public async login(params: LoginDto) {
-    const data = await this.userRepository.findOneBy({ email: params.email });
+    const { email, code } = params;
+    const data = await this.userRepository.findOneBy({ email });
 
     if (!data) {
       throw new HttpException('用户不存在', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,14 +108,22 @@ export class AuthService {
 
     const { password, id, ...user } = data;
 
-    if (params.password !== password) {
+    if (params.password && params.password !== password) {
       throw new HttpException('密码错误', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (code && code !== this.codesPool[email]) {
+      throw new HttpException('验证码错误', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (!code || !params.password) {
+      throw new HttpException('搞我？玩阴的', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const token = this.generateToken(user.uid);
 
     return {
-      user,
+      ...user,
       token,
     };
   }

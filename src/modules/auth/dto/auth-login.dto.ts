@@ -24,14 +24,19 @@ export class LoginDto {
     description: '邮箱',
   })
   email: string;
-
-  @IsNotEmpty({ message: '密码不能为空' })
   @IsString()
-  @Length(8, 16, { message: '密码 8 - 16位' })
   @ApiProperty({
     description: '密码',
-    minLength: 8,
     maxLength: 16,
   })
   password: string;
+
+  @IsString()
+  @Length(4, 4)
+  @ApiProperty({
+    description: '验证码',
+    minLength: 4,
+    maxLength: 4,
+  })
+  code: string;
 }
