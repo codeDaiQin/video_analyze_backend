@@ -21,4 +21,15 @@ export class UserEntity {
 
   @Column({ type: 'uuid', name: 'uid' })
   uid: string;
+
+  @Column({
+    nullable: true,
+  })
+  avatar: string;
+
+  @Column({
+    nullable: true,
+    default: 0,
+  })
+  exp: number;
 }

@@ -3,12 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
 import { UserDetailDto } from '@/modules/user/dto/user-detail.dto';
 
-export class LoginResponse {
-  @ApiProperty({
-    description: '用户详情',
-  })
-  user: UserDetailDto;
-
+export class LoginResponse extends UserDetailDto {
   @ApiProperty({
     description: 'token',
   })
