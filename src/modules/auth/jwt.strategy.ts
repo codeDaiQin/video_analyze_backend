@@ -2,7 +2,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
 import { UserEntity } from '@/modules/user/user.entity';
 import { UserService } from '../user/user.service';
 import { JwtDto } from './dto/jwt.dto';
@@ -11,12 +10,11 @@ import { JwtDto } from './dto/jwt.dto';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly userService: UserService,
-    private readonly authService: AuthService,
     readonly configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromHeader('token'),
-      ignoreExpiration: false,
+      ignoreExpiration: false, // 如果为 true，则不验证到期的令牌
       secretOrKey: configService.get<string>('JWT_SECRET'),
     });
   }

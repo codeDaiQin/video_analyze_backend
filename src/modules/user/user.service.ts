@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from './dto/user-update.dto';
 import { UserEntity } from './user.entity';
-import { AuthService } from '../auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -13,14 +10,6 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-
-  public async findAll() {
-    const users = await this.userRepository.find();
-
-    return {
-      users,
-    };
-  }
 
   public async findByUid(uid: string) {
     const user = await this.userRepository.findOneBy({
@@ -38,10 +27,17 @@ export class UserService {
   }
 
   public async update(uid: string, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update({ uid }, updateUserDto);
-  }
+    const { email } = updateUserDto;
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    // 更新邮箱时 防止 冲突
+    if (email) {
+      const user = await this.findByEmail(email);
+
+      if (user) {
+        throw new HttpException('用户已存在', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+    return await this.userRepository.update({ uid }, updateUserDto);
   }
 }

@@ -77,28 +77,33 @@ export class AuthService {
   // 注册
   public async register(createUser: RegisterDto) {
     const { code, email } = createUser;
-    if (!code || !email) {
-      throw new Error('请输入正确内容');
-    }
 
     const user = await this.userRepository.findOneBy({ email });
 
     // 检查账号是否存在
     if (user) {
-      throw new Error('用户已存在');
+      throw new HttpException('用户已存在', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // 校验 验证码
     if (code !== this.codesPool[email]) {
-      throw new Error('验证码错误');
+      throw new HttpException('验证码错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // 先占位成后更新详细信息
+    // 清除验证码
+    delete this.codesPool[email];
+
+    // 先占位, 后续更新详细信息
     const uid = v4();
-    return await this.userRepository.save({ email, uid });
+    return await this.userRepository.save({
+      email,
+      uid,
+    });
   }
 
   // 登录
   public async login(params: LoginDto) {
+    // 这里使用 密码 和 验证码两种登录方式
     const { email, code } = params;
     const data = await this.userRepository.findOneBy({ email });
 
@@ -108,14 +113,17 @@ export class AuthService {
 
     const { password, id, ...user } = data;
 
+    // 存在 密码时校验
     if (params.password && params.password !== password) {
       throw new HttpException('密码错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // 存在 验证码时校验
     if (code && code !== this.codesPool[email]) {
       throw new HttpException('验证码错误', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // 兜底验证 code password 全为空
     if (!code && !params.password) {
       throw new HttpException('搞我？玩阴的', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -126,5 +134,10 @@ export class AuthService {
       ...user,
       token,
     };
+  }
+
+  // 忘记密码
+  public async forgetPassWord(email: string, password: string) {
+    return await this.userRepository.update({ email }, { password });
   }
 }

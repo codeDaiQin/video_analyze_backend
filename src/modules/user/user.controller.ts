@@ -16,7 +16,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
-  @Get('getUserDetail')
+  @Get('detail')
   @ApiResponse({
     status: 200,
     description: '获取用户详情',
