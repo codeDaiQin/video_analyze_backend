@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from '../user/dto/user-update.dto';
 
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -38,8 +39,8 @@ export class AuthController {
 
   @Post('forgetPassWord')
   @ApiOperation({ summary: '忘记密码' })
-  forgetPassWord() {
-    return '忘记密码';
+  forgetPassWord(@Body() { email, password }: UpdateUserDto) {
+    return this.authService.forgetPassWord(email, password);
   }
 
   @Get('code/:email')

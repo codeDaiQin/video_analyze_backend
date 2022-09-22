@@ -13,7 +13,6 @@ export class UploadService {
     if (!existsSync(path)) {
       mkdirSync(path);
     }
-    console.log(file, 'file');
 
     const { originalname, mimetype, buffer } = file;
 
