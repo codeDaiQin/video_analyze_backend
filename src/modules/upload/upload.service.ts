@@ -1,4 +1,4 @@
-import { IMAGE_MIMETYPE } from '@/constants/mimetype';
+import { IMAGE_MIMETYPE, VIDEO_MIMETYPE } from '@/constants/mimetype';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -18,6 +18,10 @@ export class UploadService {
 
     if (type === UploadType.AVATAR && !IMAGE_MIMETYPE.includes(mimetype)) {
       throw new HttpException('只能传图片', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (type === UploadType.VIDEO && !VIDEO_MIMETYPE.includes(mimetype)) {
+      throw new HttpException('只能传视频', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // 计算md5值 防止重复存储

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,16 +32,8 @@ import { UploadModule } from './modules/upload/upload.module';
         database: config.get<string>('TYPEORM_DATABASE'),
         synchronize: true,
         autoLoadEntities: true,
-        // logging: true,
+        logging: true, // 输出 sql 日志
       }),
-    }),
-    // 文件处理
-    MulterModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        dest: '/upload',
-      }),
-      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],

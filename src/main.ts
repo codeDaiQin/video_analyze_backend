@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { NestApplicationOptions, VersioningType, Logger } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
@@ -9,8 +11,16 @@ import { ValidationPipe } from './pipe/Validation.pipe';
 
 async function bootstrap() {
   const appOptions: NestApplicationOptions = { cors: true, bodyParser: true };
-  const app = await NestFactory.create(AppModule, appOptions);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    appOptions,
+  );
   const configService = app.get<ConfigService>(ConfigService);
+
+  // static server
+  app.useStaticAssets(join(__dirname, '..', 'static'), {
+    prefix: '/static/',
+  });
 
   // prefix
   app.setGlobalPrefix('api');
@@ -41,4 +51,5 @@ async function bootstrap() {
   await app.listen(3000);
   Logger.log(`Swagger [OpenApi] - 接口文档: ${await app.getUrl()}/docs`);
 }
+
 bootstrap();

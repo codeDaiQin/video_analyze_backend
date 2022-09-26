@@ -5,11 +5,21 @@ import * as ffmpeg from 'ffmpeg';
 import { exec } from 'child_process';
 import puppeteer from 'puppeteer';
 import { v4 } from 'uuid';
+import { VideoEntity } from './video.entity';
+import { VideoCreateDto } from './dto/video-create.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PageOptionsDto } from '@/common/dto/pageOptions.dto';
+import { pageOptions } from '@/common/helper/transform';
 
 const videoExt = ['mp4'];
 
 @Injectable()
 export class VideoService {
+  constructor(
+    @InjectRepository(VideoEntity)
+    private readonly videoRepository: Repository<VideoEntity>,
+  ) {}
   private formatTime(seconds: number): `${string}:${string}:${string}` {
     const h = Math.floor(seconds / 3600);
     seconds %= 3600;
@@ -231,17 +241,30 @@ export class VideoService {
     return html;
   }
 
-  // 上传视频
-  public async uploadVideo() {
-    const id = v4();
+  // 创建视频资源
+  public async createVideoResource(
+    newResource: VideoCreateDto,
+    authorName: string,
+    authorUid: string,
+  ) {
+    const uid = v4();
+    return await this.videoRepository.save({
+      ...newResource,
+      authorName,
+      authorUid,
+      uid,
+    });
+  }
 
-    // 检查用户 资源目录是否存在
-    if (!existsSync('./tmp')) {
-      mkdirSync('./tmp');
-    }
+  // 获取视频资源列表
+  public async getVideoResourceList(params: PageOptionsDto) {
+    const [data, total] = await this.videoRepository.findAndCount(
+      pageOptions(params),
+    );
 
     return {
-      id,
+      data,
+      total,
     };
   }
 }
