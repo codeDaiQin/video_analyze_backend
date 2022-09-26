@@ -14,4 +14,7 @@ export class UploadDto {
     enum: UploadType,
   })
   type: UploadType;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: any;
 }

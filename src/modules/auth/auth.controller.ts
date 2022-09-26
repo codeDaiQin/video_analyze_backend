@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from '../user/dto/user-update.dto';
 
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginDto, LoginResponse } from './dto/auth-login.dto';
 import { RegisterDto } from './dto/auth-register.dto';
@@ -10,10 +9,7 @@ import { RegisterDto } from './dto/auth-register.dto';
 @ApiTags('auth - 开发中')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @ApiOperation({ summary: '登录' })

@@ -1,9 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 
-import { UserDetailDto } from '@/modules/user/dto/user-detail.dto';
+import { UserEntity } from '@/modules/user/user.entity';
 
-export class LoginResponse extends UserDetailDto {
+export class LoginResponse extends UserEntity {
   @ApiProperty({
     description: 'token',
   })
@@ -11,21 +10,7 @@ export class LoginResponse extends UserDetailDto {
 }
 
 // Data Transfer Object（数据传输对象） 我们使用Dto可以很大程度在请求参数校验上做一些自动化的验证功能，这就是Dto的用意
-export class LoginDto {
-  @IsNotEmpty({ message: '邮箱不能为空' })
-  @IsString()
-  @IsEmail({}, { message: '邮箱格式不正确' })
-  @ApiProperty({
-    description: '邮箱',
-  })
-  email: string;
-
-  @ApiProperty({
-    description: '密码',
-    maxLength: 16,
-  })
-  password: string;
-
+export class LoginDto extends PickType(UserEntity, ['email', 'password']) {
   @ApiProperty({
     description: '验证码',
     minLength: 4,
