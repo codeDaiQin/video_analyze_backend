@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PageOptionsDto } from '@/common/dto/pageOptions.dto';
 import { pageOptions } from '@/common/helper/transform';
+import { VideoUpdateDto } from './dto/video-update.dto';
 
 const videoExt = ['mp4'];
 
@@ -248,11 +249,15 @@ export class VideoService {
     authorUid: string,
   ) {
     const uid = v4();
+    const time = new Date().getTime();
+
     return await this.videoRepository.save({
       ...newResource,
       authorName,
       authorUid,
       uid,
+      lastUpdateTime: time,
+      createTime: time,
     });
   }
 
@@ -266,5 +271,38 @@ export class VideoService {
       data,
       total,
     };
+  }
+
+  // 更新视频资源
+  public async updateVideoResource(
+    videoUid: string,
+    authorUid: string,
+    newResource: VideoUpdateDto,
+  ) {
+    const videoResource = await this.videoRepository.findOneBy({
+      uid: videoUid,
+    });
+
+    if (!videoResource) {
+      // 找不到
+    }
+
+    if (videoResource.authorUid !== authorUid) {
+      // 没权限
+    }
+
+    return await this.videoRepository.update(
+      { uid: videoUid },
+      {
+        ...newResource,
+        lastUpdateTime: new Date().getTime(),
+      },
+    );
+  }
+
+  // 删除视频资源
+  public async deleteVideoResource(videoUid: string, authorUid: string) {
+    const res = await this.videoRepository.delete({ uid: videoUid, authorUid });
+    return res;
   }
 }

@@ -104,25 +104,21 @@ export class VideoEntity {
 
   @ApiProperty({
     description: '创建时间',
-    type: Date,
   })
   @Column({
     nullable: true,
-    type: 'datetime',
-    default: () => 'NOW()',
+    default: 0,
   })
-  createTime?: string;
+  createTime?: number;
 
   @ApiProperty({
     description: '上次更新时间',
-    type: Date,
   })
   @Column({
     nullable: true,
-    type: 'datetime',
-    default: () => 'NOW()',
+    default: 0,
   })
-  lastUpdateTime?: string;
+  lastUpdateTime?: number;
 
   @ApiProperty({
     description: '浏览量',
