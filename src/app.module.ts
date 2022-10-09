@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { VideoModule } from './modules/video/video.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UploadModule } from './modules/upload/upload.module';
     UserModule,
     VideoModule,
     UploadModule,
+    ChatModule,
 
     ConfigModule.forRoot({
       isGlobal: true,

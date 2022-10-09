@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 import { existsSync, mkdirSync } from 'fs';
 import * as ffmpeg from 'ffmpeg';
@@ -302,7 +302,14 @@ export class VideoService {
 
   // 删除视频资源
   public async deleteVideoResource(videoUid: string, authorUid: string) {
-    const res = await this.videoRepository.delete({ uid: videoUid, authorUid });
-    return res;
+    const video = await this.videoRepository.findOneBy({ uid: videoUid });
+    if (!video) {
+      throw new HttpException('找不到资源', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (video.authorUid === authorUid) {
+      return await this.videoRepository.delete({ uid: videoUid });
+    }
+    throw new HttpException('权限不足', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
