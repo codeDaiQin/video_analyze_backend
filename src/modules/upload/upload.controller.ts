@@ -39,7 +39,7 @@ export class UploadController {
     return this.uploadService.saveFile(type, uid, file);
   }
 
-  @Get()
+  @Get('clear')
   clearTimed() {
     return this.uploadService.clearFile();
   }
