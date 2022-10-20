@@ -9,13 +9,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     // 文件处理
     MulterModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => {
-        return {
-          limits: {
-            fileSize: +config.get<string>('LIMIT_SIZE'),
-          },
-        };
-      },
+      useFactory: async (config: ConfigService) => ({
+        limits: {
+          fileSize: +config.get<string>('LIMIT_SIZE'),
+        },
+      }),
       inject: [ConfigService],
     }),
   ],

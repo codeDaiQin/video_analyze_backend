@@ -6,6 +6,7 @@ import {
   UploadedFile,
   Req,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -36,5 +37,10 @@ export class UploadController {
     const { uid } = req.user as UserEntity;
 
     return this.uploadService.saveFile(type, uid, file);
+  }
+
+  @Get('clear')
+  clearTimed() {
+    return this.uploadService.clearFile();
   }
 }

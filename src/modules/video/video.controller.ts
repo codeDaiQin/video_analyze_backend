@@ -8,11 +8,12 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 
 import { PageOptionsDto } from '@/common/dto/pageOptions.dto';
 import { UserEntity } from '../user/user.entity';
@@ -28,6 +29,22 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Get()
+  @ApiOperation({ summary: '视频资源列表' })
+  @ApiResponse({
+    status: 200,
+    description: '视频资源详情',
+    type: VideoListResponse,
+  })
+  getDetail(
+    @Param() fileName: string,
+    @Res() response: Response,
+    @Req() req: Request,
+  ) {
+    const { uid } = req.user as UserEntity;
+    return this.videoService.getVideoResource({ fileName, response, uid });
+  }
+
+  @Get('list')
   @ApiOperation({ summary: '视频资源列表' })
   @ApiResponse({
     status: 200,

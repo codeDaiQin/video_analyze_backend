@@ -1,6 +1,12 @@
 import { IMAGE_MIMETYPE, VIDEO_MIMETYPE } from '@/constants/mimetype';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  writeFileSync,
+} from 'fs';
 import { join } from 'path';
 import * as md5 from 'md5';
 import { UploadType } from './dto/upload.dto';
@@ -32,5 +38,34 @@ export class UploadService {
     }
 
     return fileName;
+  }
+
+  private getFiles(path: string) {
+    const fileNames: string[] = [];
+    const target = statSync(path);
+
+    if (target.isDirectory()) {
+      const files = readdirSync(path);
+
+      files.forEach((file) => {
+        fileNames.push(...this.getFiles(join(path, file)));
+      });
+    } else if (target.isFile()) {
+      fileNames.push(path);
+    }
+
+    return fileNames;
+  }
+
+  public async clearFile() {
+    const staticPathPrefix = './static/';
+
+    const fileNames = this.getFiles(staticPathPrefix);
+
+    for (const i of fileNames) {
+      const [_, userUid, fileName] = i.split('/');
+    }
+
+    return [];
   }
 }
